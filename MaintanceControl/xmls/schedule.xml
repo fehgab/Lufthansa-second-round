@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schedule>
+  
+  <leg aircraft="D-AILY" state="ARR" identifier="LH400" dayOfOrigin="2015-07-09" arr="JFK" dep="FRA">
+    <time status="Scheduled" dep="10:11" arr="20:11"/>
+    <time status="Actual" dep="10:10" arr="20:21" takeoff="10:21" landing="20:14"/>
+  </leg>
+  <leg aircraft="D-ABRA" state="DEP" identifier="LH400" dayOfOrigin="2015-07-10" arr="JFK" dep="FRA">
+    <time status="Scheduled" dep="10:11" arr="20:11"/>
+    <time status="Actual" dep="10:20" takeoff="10:21" /> 
+  </leg>
+  
+  <check aircraft="D-ABRA" type="A" start="2015-07-10 21:00" end="2015-07-10 22:00"/>
+  
+  <leg aircraft="D-AVRO" state="SKD" identifier="LH400" dayOfOrigin="2015-07-11" arr="JFK" dep="FRA">
+    <time status="Scheduled" dep="10:11" arr="20:11"/>
+  </leg>
+</schedule>

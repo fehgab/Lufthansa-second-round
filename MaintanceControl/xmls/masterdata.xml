@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterdata>
+  <checks>
+    <check type="A">
+      <triggers>
+        <flightHours>250</flightHours>
+        <cycles>300</cycles>
+      </triggers>
+    </check>
+
+    <check type="B">
+      <triggers>
+        <calendarDays>180</calendarDays>
+      </triggers>
+      <includes>
+        <includeCheck type="A"/>
+      </includes>
+    </check>
+
+    <check type="C">
+      <triggers>
+        <calendarDays>720</calendarDays>
+        <flightHours>10000</flightHours>
+        <cycles>3600</cycles>
+      </triggers>
+      <includes>
+        <includeCheck type="B"/>
+      </includes>
+    </check>
+
+    <check type="D">
+      <triggers>
+        <calendarDays>2200</calendarDays>
+        <flightHours>33000</flightHours>
+        <cycles>11000</cycles>
+      </triggers>
+      <includes>
+        <includeCheck type="C"/>
+      </includes>
+    </check>
+  </checks>
+  
+  
+</masterdata>
