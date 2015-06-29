@@ -4,13 +4,10 @@ import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import java.io.*;
 import java.util.*;
-import org.xml.sax.SAXException;
 
 
 public class MaintanceControl
 {
-
-    private static final String[] EMPTY_STRING_ARRAY = new String[0];
     
     private static List<String> GetXMLPath()    
             throws IOException
