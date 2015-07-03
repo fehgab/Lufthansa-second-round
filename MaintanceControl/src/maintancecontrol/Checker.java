@@ -1,26 +1,29 @@
 package maintancecontrol;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
+//Read the HashMaps and decide about violation.
 public class Checker {
 
     private String check_type = "";
     private ParseMasterdata pm;
     private ParseSchedule ps;
-    
-    private int flight_hours = 0;
-    private int cycles = 0;
-    private int calendarDays = 0;
+
+    private double flight_hours = 0;
+    private double cycles = 0;
+    private double calendarDays = 0;
     private Object include = "";
 
     private Boolean[] checker = new Boolean[3];
     private String identifier = "";
     private String where_to_where = "";
     private String day_of_origin = "";
-    private int cd = 0;
-    private int s = 0;
+    private double cd = 0;
+    private double f = 0;
     private int c = 0;
 
     private void GetMasterData() {
@@ -65,13 +68,13 @@ public class Checker {
             Map.Entry sch_pair = (Map.Entry) in_sch.next();
             Object key = sch_pair.getKey();
             Iterator in_params = ps.schedule.get(key).entrySet().iterator();
-            System.out.println(sch_pair.getKey() + " = " + sch_pair.getValue());
+            System.out.println(sch_pair.getKey());
             while (in_params.hasNext()) {
                 Map.Entry param_pair = (Map.Entry) in_params.next();
                 String param_key = String.valueOf(param_pair.getKey());
                 String param_value = String.valueOf(param_pair.getValue());
                 if (param_key.contains("calendar_days")) {
-                    cd = Integer.parseInt(param_value);
+                    cd = Double.parseDouble(param_value);
                     if (calendarDays != 0) {
                         if (cd > calendarDays) {
                             checker[0] = Boolean.TRUE;
@@ -79,9 +82,9 @@ public class Checker {
                     }
                 }
                 if (param_key.contains("flightHours")) {
-                    s = Integer.parseInt(param_value);
+                    f = Double.parseDouble(param_value);
                     if (flight_hours != 0) {
-                        if (s > flight_hours) {
+                        if (f > flight_hours) {
                             checker[1] = Boolean.TRUE;
                         }
                     }
@@ -107,18 +110,29 @@ public class Checker {
             Print();
         }
     }
-    
-    private void Print(){
+
+    // Round double numbers.
+    private double round(double value, int places) {
+        if (places < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    private void Print() {
         if (checker[0]) {
-            System.out.println("\"" + check_type + "\" Check violation for leg " + identifier + " " + where_to_where + " " + day_of_origin + ": " + String.valueOf(cd) + " calnedar days at landing ( limit: " + String.valueOf(calendarDays) + ")");
+            System.out.println("\"" + check_type + "\" Check violation for leg " + identifier + " " + where_to_where + " " + day_of_origin + ": " + String.valueOf(round(cd, 2)) + " calnedar days at landing ( limit: " + String.valueOf(calendarDays) + ")");
             System.out.println();
         }
         if (checker[1]) {
-            System.out.println("\"" + check_type + "\" Check violation for leg " + identifier + " " + where_to_where + ": " + String.valueOf(s) + " flight hours at landing ( limit: " + String.valueOf(flight_hours) + ")");
+            System.out.println("\"" + check_type + "\" Check violation for leg " + identifier + " " + where_to_where + ": " + String.valueOf(round(f, 2)) + " flight hours at landing ( limit: " + String.valueOf(flight_hours) + ")");
             System.out.println();
         }
         if (checker[2]) {
-            System.out.println("\"" + check_type + "\" Check violation for leg " + identifier + " " + where_to_where + ": " + String.valueOf(c) + " cycles at landing ( limit: " + String.valueOf(cycles) + ")");
+            System.out.println("\"" + check_type + "\" Check violation for leg " + identifier + " " + where_to_where + ": " + String.valueOf(round(c, 2)) + " cycles at landing ( limit: " + String.valueOf(cycles) + ")");
             System.out.println();
         }
         if (!Arrays.asList(checker).contains(Boolean.TRUE)) {

@@ -1,5 +1,7 @@
 package maintancecontrol;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,25 +24,27 @@ public class ParseSchedule {
     public Map<String, Map<String, String>> schedule = new HashMap<>();
 
 //    Calculate time difference between two given time, format is 14:23.
-//    Returns the difference as long.
-    private long CalculateTimeDifference(String bigger_time, String smaller_time)
+//    Returns the difference as double.
+    private double CalculateTimeDifference(String bigger_time, String smaller_time)
             throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         Date date1 = format.parse(bigger_time);
         Date date2 = format.parse(smaller_time);
-        long diff = TimeUnit.MILLISECONDS.toHours(date1.getTime() - date2.getTime());
+        long d = TimeUnit.MILLISECONDS.toMinutes(date1.getTime() - date2.getTime());
+        double diff = d / 60.0;
 //        System.out.println(diff);
         return diff;
     }
+
 //    Calculate date difference between today and the given date, format is 1990-03-14.
 //    Returns the difference as string. 
-
     private String CalculateDateDifference(String parsed_date)
             throws ParseException {
         Date today = new Date();
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = date_format.parse(parsed_date);
-        String diff = String.valueOf(TimeUnit.MILLISECONDS.toDays(today.getTime() - date.getTime()));
+        long d = TimeUnit.MILLISECONDS.toHours(today.getTime() - date.getTime());
+        String diff = String.valueOf((d / 24.0));
 //        System.out.println(diff);
         return diff;
     }
@@ -70,9 +74,9 @@ public class ParseSchedule {
                 String scheduled_departure = "";
                 String actual_arrive = "";
                 String actual_departure = "";
-                long scheduled_hours = 0;
-                long departure_hours = 0;
-                long arrive_hours = 0;
+                double scheduled_hours = 0;
+                double departure_hours = 0;
+                double arrive_hours = 0;
                 String aircraft = leg_attributes.getNamedItem("aircraft").getNodeValue();
 //                System.out.println(aircraft);
                 String id = leg_attributes.getNamedItem("identifier").getNodeValue();
@@ -114,7 +118,7 @@ public class ParseSchedule {
                 if (state.contains("SKD")) {
                     scheduled_hours = CalculateTimeDifference(scheduled_arrive, scheduled_departure);
                     if (counted_hours != null) {
-                        temp.put("flightHours", String.valueOf(Integer.parseInt(String.valueOf(counted_hours)) + scheduled_hours));
+                        temp.put("flightHours", String.valueOf(Double.parseDouble(String.valueOf(counted_hours)) + scheduled_hours));
                     } else {
                         temp.put("flightHours", String.valueOf(scheduled_hours));
                     }
@@ -123,7 +127,7 @@ public class ParseSchedule {
                 if (state.contains("DIV") || state.contains("DEP")) {
                     departure_hours = CalculateTimeDifference(scheduled_arrive, actual_departure);
                     if (counted_hours != null) {
-                        temp.put("flightHours", String.valueOf(Integer.parseInt(String.valueOf(counted_hours)) + departure_hours));
+                        temp.put("flightHours", String.valueOf(Double.parseDouble(String.valueOf(counted_hours)) + departure_hours));
                     } else {
                         temp.put("flightHours", String.valueOf(departure_hours));
                     }
@@ -131,7 +135,7 @@ public class ParseSchedule {
                 if (state.contains("ARR")) {
                     arrive_hours = CalculateTimeDifference(actual_arrive, actual_departure);
                     if (counted_hours != null) {
-                        temp.put("flightHours", String.valueOf(Integer.parseInt(String.valueOf(counted_hours)) + arrive_hours));
+                        temp.put("flightHours", String.valueOf(Double.parseDouble(String.valueOf(counted_hours)) + arrive_hours));
                     } else {
                         temp.put("flightHours", String.valueOf(arrive_hours));
                     }
