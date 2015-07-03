@@ -1,25 +1,24 @@
 package maintancecontrol;
 
 import java.util.HashMap;
-import org.w3c.dom.Document;
+import java.util.Map;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 
 public class ParseMasterdata
 {
+    
+    Map<String, Map<String, String>> master_data = new HashMap<>();
 
-    public static HashMap ParseMasterdata(Element elem)
+    public void ParseMasterdata(Element elem)
     {
-        HashMap master_data = new HashMap<String, HashMap<String, String>>();
-        HashMap params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         NodeList checks = elem.getChildNodes();
         for (int j = 0; j < checks.getLength(); j++)
         {
             if (checks.item(j) instanceof Element == false)
-            {
                 continue;
-            }
             NodeList check = checks.item(j).getChildNodes();
             for (int i = 0; i < check.getLength(); i++)
             {
@@ -27,7 +26,7 @@ public class ParseMasterdata
                 if (node_name.matches("^check$"))
                 {
                     String type = check.item(i).getAttributes().getNamedItem("type").getNodeValue();
-                    System.out.println(type);
+//                    System.out.println(type);
                     NodeList parameters = check.item(i).getChildNodes();
                     for (int k = 0; k < parameters.getLength(); k++)
                     {
@@ -35,16 +34,12 @@ public class ParseMasterdata
                         for (int z = 0; z < trigger_nodes.getLength(); z++)
                         {
                             if (trigger_nodes.item(z) instanceof Element == false)
-                            {
                                 continue;
-                            }
                             String name = trigger_nodes.item(z).getNodeName();
                             String data = trigger_nodes.item(z).getTextContent();
                             if (name.endsWith("Check"))
-                            {
                                 data = trigger_nodes.item(z).getAttributes().getNamedItem("type").getNodeValue();
-                            }
-                            System.out.println(data);
+//                            System.out.println(data);
                             params.putIfAbsent(name, data);
                         }
                     }
@@ -53,6 +48,5 @@ public class ParseMasterdata
                 }
             }
         }
-        return master_data;
     }
 }
